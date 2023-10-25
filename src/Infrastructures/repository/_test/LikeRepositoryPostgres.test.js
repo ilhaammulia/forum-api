@@ -119,4 +119,43 @@ describe("LikeRepositoryPostgres", () => {
       ).resolves.toEqual(false);
     });
   });
+
+  describe("getLikeCount function", () => {
+    it("should return 1", async () => {
+      await UsersTableTestHelper.addUser({});
+      await ThreadsTableTestHelper.addThread({});
+      await CommentsTableTestHelper.addComment({});
+      await LikesTableTestHelper.likeComment({});
+
+      const commentId = "comment-123";
+
+      const fakeIdGenerator = () => "123";
+      const likeRepositoryPostgres = new LikeRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
+
+      await expect(
+        likeRepositoryPostgres.getLikeCount(commentId)
+      ).resolves.toEqual(1);
+    });
+
+    it("should return 0", async () => {
+      await UsersTableTestHelper.addUser({});
+      await ThreadsTableTestHelper.addThread({});
+      await CommentsTableTestHelper.addComment({});
+      await LikesTableTestHelper.likeComment({});
+      const commentId = "comment-987";
+
+      const fakeIdGenerator = () => "123";
+      const likeRepositoryPostgres = new LikeRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
+
+      await expect(
+        likeRepositoryPostgres.getLikeCount(commentId)
+      ).resolves.toEqual(0);
+    });
+  });
 });
